@@ -4,6 +4,7 @@ A lightweight collaborative document editor inspired by Google Docs, built with 
 (MongoDB · Express · React · Node.js).
 
 > **Live demo:** https://collab-docs-1-jr1v.onrender.com/
+> **Video link:** https://drive.google.com/file/d/1k54aoZT0eidtuz4AKtZzslaNiopy6nig/view?usp=sharing
 > *(Hosted on a free plan. If the page is slow to load the first time, wait about a minute while the server wakes up.)*
 
 ## Test accounts
