@@ -1,19 +1,41 @@
-const { Router } = require('express');
-const { z } = require('zod');
-const validate = require('../middleware/validate');
-const { requireAuth } = require('../middleware/auth');
+const { Router } = require("express");
+const { z } = require("zod");
 
-const credentials = {
-  email: z.string().trim().toLowerCase().pipe(z.email('Enter a valid email')),
-  password: z.string().min(8, 'Password must be at least 8 characters').max(128),
-};
-const registerSchema = z.object({ name: z.string().trim().min(1, 'Name is required').max(80), ...credentials });
-const loginSchema = z.object({ email: credentials.email, password: z.string().min(1, 'Password is required') });
+const validate = require("../middleware/validate");
+const { requireAuth } = require("../middleware/auth");
 
-module.exports = ({ authService }) => {
-  const r = Router();
-  r.post('/register', validate(registerSchema), async (req, res) => res.status(201).json(await authService.register(req.body)));
-  r.post('/login', validate(loginSchema), async (req, res) => res.json(await authService.login(req.body)));
-  r.get('/me', requireAuth, async (req, res) => res.json({ user: await authService.me(req.userId) }));
-  return r;
+const registerSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(80, "Name cannot exceed 80 characters"),
+
+  email: z.string().trim().toLowerCase().pipe(z.email("Enter a valid email")),
+
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(128, "Password cannot exceed 128 characters"),
+});
+
+const loginSchema = z.object({
+  email: z.string().trim().toLowerCase().pipe(z.email("Enter a valid email")),
+
+  password: z.string().min(1, "Password is required"),
+});
+
+module.exports = ({ authController }) => {
+  const router = Router();
+
+  // Register user
+  router.post("/register", validate(registerSchema), authController.register);
+
+  // Login user
+  router.post("/login", validate(loginSchema), authController.login);
+
+  // Get logged-in user
+  router.get("/me", requireAuth, authController.me);
+
+  return router;
 };
